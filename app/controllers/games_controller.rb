@@ -15,14 +15,14 @@ class GamesController < ApplicationController
   end
 
   def game_params
-    params.require(:game).permit(:title, :month, :categorty, :rating, :platform)
+    params.require(:game).permit(:title, :month, :category, :rating, :platform)
   end
 
   def create
     @game = Game.new(game_params)
 
     if @game.save
-      render json: @game, status: :created, location: @game
+      render json: @game, status: :created
     else
       render json: @game.errors, status: :unprocessable_entity
     end
