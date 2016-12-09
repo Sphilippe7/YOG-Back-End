@@ -1,4 +1,5 @@
 class GamesController < ApplicationController
+  before_action :authenticate
   before_action :set_game, only: [:show, :update, :destroy]
   def index
     @games = Game.all
@@ -10,16 +11,8 @@ class GamesController < ApplicationController
     render json: Game.find(params[:id])
   end
 
-  def set_game
-    @game = Game.find(params[:id])
-  end
-
-  def game_params
-    params.require(:game).permit(:title, :month, :category, :rating, :platform)
-  end
-
   def create
-    @game = Game.new(game_params)
+    @game = current_user.games.build(game_params)
 
     if @game.save
       render json: @game, status: :created
@@ -40,6 +33,14 @@ class GamesController < ApplicationController
     @game.destroy
 
     head :no_content
+  end
+
+  def set_game
+    @game = current_user.games.find(params[:id])
+  end
+
+  def game_params
+    params.require(:game).permit(:title, :month, :category, :rating, :platform)
   end
 
   private :set_game, :game_params
